@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>Katalog</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#"><img src="/img/logo.png" width="113" height="21" alt="LOGO"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            Dashboard
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="#">Dashboard</a></li>
+            <li><a class="dropdown-item" href="#">Mijozlar</a></li>
+            <li><a class="dropdown-item" href="#">Ta'minotchilar</a></li>
+            <li><a class="dropdown-item" href="#">Xomashyo ombori</a></li>
+            <li><a class="dropdown-item" href="#">Maxsulot ombori</a></li>
+            <li><a class="dropdown-item" href="#">Hisobot</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/category/all}">Katalog</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-md-2 d-none d-md-block bg-dark sidebar">
+      <div class="position-sticky pt-3">
+        <ul class="nav flex-column h-100">
+          <li class="nav-item">
+            <a class="nav-link active bg-primary text-bg-light" aria-current="page" th:href="@{/product}">Maxsulotlar</a>
+          </li>
+          <li class="nav-item" >
+            <a class="nav-link " th:href="@{/category/all}">Maxsulotlar turlari</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/materials}">Xomashyolar</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/measurement}">O'lchov birliklari</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/users}">Foydalanuvchilar</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/users/clients}">Xaridorlar</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/users/suppliers}">Taminotchilar</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <main class="col-md-9 offset-1 ms-sm-auto">
+      <button class="btn btn-success m-10" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Qo'shish
+      </button>
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Maxsulot Qushish</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form th:action="@{/product}" method="post" th:object="${productDTO}">
+                <div class="mb-3">
+                  <label for="nameUz" class="form-label">Nomi(Uz)</label>
+                  <input type="text" class="form-control" id="nameUz" name="nameUz" placeholder="Nomi(Uz)" th:field="*{nameUz}">
+                </div>
+                <div class="mb-3">
+                  <label for="nameRu" class="form-label">Nomi(Ru)</label>
+                  <input type="text" class="form-control" id="nameRu" name="nameRu" placeholder="Nomi(Ru)" th:field="*{nameRu}">
+                </div>
+                <div class="mb-3" >
+                  <input type="hidden" id="category_id" th:field="*{categoryId}">
+                  <select onchange="onChange()" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" id="selected_category" >
+                    <option th:each="categoryObj:${categories}"
+                            th:text="${categoryObj.nameUz}"
+                            th:value="${categoryObj.id}"
+                    ></option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Saqlash</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <table class="table mb-4">
+        <thead>
+        <tr>
+          <th scope="col">TR</th>
+          <th scope="col">Rasm</th>
+          <th scope="col">Nomi(Uz)</th>
+          <th scope="col">Nomi(Ru)</th>
+          <th scope="col">Kategorya</th>
+          <th scope="col">Amallar</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="productObj :${products}">
+          <th scope="row" th:text="${productObjStat.index+1}"></th>
+          <td></td>
+          <td th:text="${productObj.getNameUz()}"></td>
+          <td th:text="${productObj.getNameRu()}"></td>
+          <td th:text="${productObj.getCategoryName()}"></td>
+          <td>
+            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#updateModal" >
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <a class="btn btn-danger"  th:href="@{|/product/delete/${productObj.getId()}|}">
+              <i class="bi bi-trash"></i>
+            </a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </main>
+  </div>
+</div>
+<script>
+  const e = document.getElementById("selected_category");
+
+  function onChange() {
+    const value = e.value;
+    const text = e.options[e.selectedIndex].text;
+    console.log(value, text);
+    document.getElementById("category_id").value=value;
+  }
+
+</script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

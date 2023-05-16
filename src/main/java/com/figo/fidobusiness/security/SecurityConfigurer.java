@@ -1,35 +1,24 @@
 package com.figo.fidobusiness.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
@@ -40,22 +29,16 @@ import java.util.stream.Collectors;
 
 )
 @PropertySource("classpath:application.properties")
-public class SecurityConfigurer implements WebSecurityConfigurer<WebSecurity> {
+public class SecurityConfigurer {
     public static final String[] WHITE_LIST = {
             "/css/**",
             "/js/**",
             "/img/**",
             "/error",
             "/auth/login",
+            "/auth/register",
             "/",
-            "/auth/**",
-            "/loginSuccess",
-            "/auth/forget-password",
-            "/auth/reset-password"
-
     };
-
-
 
     private final AuthUserDetailsService authUserDetailsService;
     private final AuthenticationFailureHandler authenticationFailureHandler;
@@ -65,17 +48,6 @@ public class SecurityConfigurer implements WebSecurityConfigurer<WebSecurity> {
         this.authUserDetailsService = authUserDetailsService;
         this.authenticationFailureHandler = authenticationFailureHandler;
     }
-
-    @Override
-    public void init(WebSecurity builder) throws Exception {
-
-    }
-
-    @Override
-    public void configure(WebSecurity builder) throws Exception {
-
-    }
-
 
     @Bean
     public SessionRegistry sessionRegistry() {
@@ -116,13 +88,11 @@ public class SecurityConfigurer implements WebSecurityConfigurer<WebSecurity> {
                 .sessionRegistry(sessionRegistry())
                 .and()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .invalidSessionUrl("/login?expired=true")
                 .sessionFixation().newSession()
                 .sessionAuthenticationErrorUrl("/login?error=true")
                 .sessionAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error=true"))
                 .sessionAuthenticationStrategy(sessionAuthenticationStrategy())
                 .maximumSessions(1)
-                .expiredUrl("/login?expired=true")
                 .and()
                 .and()
                 .logout(httpSecurityLogoutConfigurer ->
@@ -143,22 +113,19 @@ public class SecurityConfigurer implements WebSecurityConfigurer<WebSecurity> {
                                 .key("EWT$@WEFYG%H$ETGE@R!T#$HJYYT$QGRWHNJU%$TJRUYRHFRYFJRYUYRHD")
                                 .tokenValiditySeconds(24 * 60 * 60)// default is 30 minutes
                                 .rememberMeCookieName("rememberME")
-                                .authenticationSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {
-                                    AuthUserDetails userDetails = (AuthUserDetails) authUserDetailsService.loadUserByUsername(authentication.getName());
-                                    authUserDetailsService.save(userDetails.getAuthUser());
-                                })
+                                .userDetailsService(authUserDetailsService)
                 );
         return http.build();
     }
 
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    public PasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder, AuthUserDetailsService authUserDetailsService)
+    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder bCryptPasswordEncoder, AuthUserDetailsService authUserDetailsService)
             throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(authUserDetailsService)

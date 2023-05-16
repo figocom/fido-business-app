@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Income</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"/>
+
+</head>
+<body>
+ <h3 class="text-center" >Omborga mahsulot qushish </h3>
+ <form th:action="@{/warehouse/createIncome}" method="post" th:object="${materialIncome}">
+     <div style="display: flex; margin-left: 20px; column-gap: 150px;">
+         <label>
+             <input type="hidden" id="material" th:field="*{material_id}">
+             <select class="form-select" style="width: 260px;" type="text" placeholder="Mahsulot" id="material-select">
+                 <option th:each="material:${materials}"
+                         th:value="${material.id}"
+                            th:text="${material.getNameUz()}">
+                 </option>
+
+             </select>
+         </label>
+         <label>
+                <input type="hidden" id="supplier" th:field="*{supplier_id}">
+             <select class="form-select" style="width: 260px;" type="text" placeholder="Ta'minlovchi" id="supplier-select">
+                 <option
+                   th:each="supplier:${suppliers}"
+                     th:value="${supplier.getSupplierId()}"
+                        th:text="${supplier.supplierName}">
+                     ></option>
+             </select>
+         </label>
+         <div style="display: flex; column-gap: 80px;">
+             <label for="list" style="display: flex; width: 200px;">
+                 <input class="form-control" id="list" type="number" placeholder="Mahsulot miqdori" th:field="*{count}">
+                 <span style="margin-left: 18px; margin-top: 5px;">List</span>
+             </label>
+             <label>
+                 <input type="number" class="form-control" style="width: 200px;" placeholder="Narxi" th:field="*{price}">
+             </label>
+             <label>
+                 <input type="date" class="form-control" style="width: 200px;" th:field="*{incomeDate}">
+             </label>
+         </div>
+     </div>
+     <div style="display: flex; position: absolute; right: 500px; bottom: 200px; column-gap: 60px;">
+         <button  class="btn btn-danger">Orqaga</button>
+         <button class="btn btn-success" type="submit">Saqlash</button>
+     </div>
+ </form>
+<script>
+    let materialSelect = document.getElementById("material-select");
+    let material = document.getElementById("material");
+    materialSelect.addEventListener("change", function () {
+        material.value = materialSelect.value;
+    })
+    let supplierSelect = document.getElementById("supplier-select");
+    let supplier = document.getElementById("supplier");
+    supplierSelect.addEventListener("change", function () {
+        supplier.value = supplierSelect.value;
+    })
+</script>
+</body>
+</html>

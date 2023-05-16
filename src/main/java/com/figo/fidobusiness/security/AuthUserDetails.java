@@ -23,15 +23,16 @@ public class AuthUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        var authRoles = Objects.requireNonNullElse(authUser.getAuthRoles(), Collections.<AuthRole>emptySet());
+        var authRoles = Objects.requireNonNullElse(authUser.getRoles(), Collections.<AuthRole>emptySet());
         var authorities = new ArrayList<SimpleGrantedAuthority>();
         authRoles.forEach(authRole -> {
             authorities.add(new SimpleGrantedAuthority("ROLE_" + authRole.getCode()));
-            Collection<AuthPermission> authPermissions = Objects.requireNonNullElse(authRole.getAuthPermissions(), Collections.<AuthPermission>emptySet());
+            Collection<AuthPermission> authPermissions = Objects.requireNonNullElse(authRole.getPermissions(), Collections.<AuthPermission>emptySet());
             authPermissions.forEach(authPermission -> {
                 authorities.add(new SimpleGrantedAuthority(authPermission.getCode()));
             });
         });
+        System.out.println("authorities: " + authorities);
         return authorities;
     }
 

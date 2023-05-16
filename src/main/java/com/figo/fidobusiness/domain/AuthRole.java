@@ -17,7 +17,7 @@ public class AuthRole  {
     private Integer id;
     private String name;
     private String code;
-    private Collection<AuthPermission> authPermissions;
+    private Collection<AuthPermission> permissions;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private AuthUser updatedBy;

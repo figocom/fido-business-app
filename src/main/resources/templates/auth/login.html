@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(~{::title},~{::link})}">
+    <meta charset="UTF-8">
+    <title>LoginPage</title>
+    <link rel="stylesheet" href="">
+</head>
+<body>
+
+<form method="post" th:action="@{/auth/login}">
+    <div id="container" class="container">
+        <div class="row">
+
+            <div class="col-6 offset-3">
+                <h3 class="text-center">Tizimga kirish</h3>
+                <div class="input-group offset-4 mb-3" style="color: red" th:if="${error}">
+                    <snap class="small  text-left" th:text="${error}"></snap>
+                </div>
+                <div class="input-group offset-4 mb-3">
+                    <label for="username">
+                        <input type="text" class="form-control" placeholder="Login" id="username" name="username">
+                    </label>
+                </div>
+                <div class="input-group offset-4 mb-3">
+                    <label for="password">
+                        <input type="password" placeholder="Password" class="form-control" id="password" name="password">
+                    </label>
+                    <i class="bi bi-eye-slash" id="togglePassword"></i>
+                </div>
+                <div class="input-group offset-4 mb-3">
+                    <input type="checkbox" id="rememberMe" class="form-check" name="rememberMe" checked>
+                    <label for="rememberMe" class="ml-5" >Remember me</label>
+                </div>
+
+                <div class="input-group offset-4  mb-3">
+                <button type="submit" class="btn btn-primary col-4">
+                    Sign in
+                </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+
+    const togglePassword = document
+        .querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+    togglePassword.addEventListener('click', () => {
+        // Toggle the type attribute using
+        // getAttribure() method
+        const type = password
+            .getAttribute('type') === 'password' ?
+            'text' : 'password';
+        password.setAttribute('type', type);
+        // Toggle the eye and bi-eye icon
+        this.classList.toggle('bi-eye');
+    });
+</script>
+
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/popper.min.js"></script>
+
+
+</body>
+</html>

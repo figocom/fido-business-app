@@ -15,9 +15,12 @@ import java.util.Collection;
 
 public class AuthUser  {
     private Integer id;
-    private String username;
+    private String username; //unique
     private String password;
-    private Collection<AuthRole> authRoles;
+    private String firstName;
+    private String lastName;
+    private String phone; //unique
+    private Collection<AuthRole> roles;
     @Builder.Default
     private StatusEnum status = StatusEnum.ACTIVE;
     private LocalDateTime createdAt;
@@ -27,4 +30,9 @@ public class AuthUser  {
     private AuthUser deletedBy;
     private boolean deleted;
 
+    public AuthUser(int id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
 }
